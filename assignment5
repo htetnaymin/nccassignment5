@@ -1,399 +1,258 @@
 #include<iostream>
-#include<cstring>
+#include<string>
+#include<fstream>
+#include <limits>
+
 using namespace std;
-#define MAX 100
-class reload
+const int MAX=100;
+fstream f;
+int myindex=0;
+
+void reload();
+class master
 {
 public:
-    FILE *f;
-    char temp[MAX];
-    int uid[MAX];
-    int id=0;
-    char uname[MAX][MAX];
-    char username[MAX];
-    char upass[MAX][MAX];
-    char password[MAX];
-    int uamount[MAX];
-    int amount=0;
-    int uage[MAX];
-    int age=0;
-    char ulocat[MAX][MAX];
-    char location[MAX];
-    int myindex=0;
-    int option=0;
-    reload()
+    master()
     {
-        char checkeof;
-        char temp1[MAX];
-        int k=0;
-        int oldj=0;
-        f=fopen("database.txt","r");
-        checkeof=fgetc(f);
-        if(f==NULL || checkeof==EOF)
-        {
-            fclose(f);
-            return;
-        }
-        ungetc(checkeof,f);
-        for (int i = 0; i < 100; ++i)
-        {
-            fscanf(f,"%[^\n]s",&temp);
-            k=0;
-            oldj=0;
-            for (int j = 0; j < MAX; ++j)
-            {
-                temp1[j]='\0';
-            }
-            for (int j = oldj;; ++j)
-            {
-                if (temp[j] == '|') {
-                    oldj = j + 1;
-                    break;
-                }
-                temp1[j] = temp[j];
-            }
-            uid[i]=atoi(temp1);
-            k=0;
-            for (int j = oldj;; ++j)
-            {
-                if (temp[j] == '|') {
-                    oldj = j + 1;
-                    break;
-                }
-                uname[i][k] = temp[j];
-                k++;
-            }
-            k=0;
-            for (int j = oldj;; ++j)
-            {
-                if (temp[j] == '|') {
-                    oldj = j + 1;
-                    break;
-                }
-                upass[i][k] = temp[j];
-                k++;
-            }
-            for (int j = 0; j < MAX; ++j)
-            {
-                temp1[j]='\0';
-            }
-            k=0;
-            for (int j = oldj;; ++j)
-            {
-                if (temp[j] == '|') {
-                    oldj = j + 1;
-                    break;
-                }
-                temp1[k] = temp[j];
-                k++;
-            }
-            uamount[i]=atoi(temp1);
-            for (int j = 0; j < MAX; ++j)
-            {
-                temp1[j]='\0';
-            }
-            k=0;
-            for (int j = oldj;; ++j)
-            {
-                if (temp[j] == '|') {
-                    oldj = j + 1;
-                    break;
-                }
-                temp1[k] = temp[j];
-                k++;
-            }
-            uage[i]=atoi(temp1);
-            k=0;
-            for (int j = oldj;; ++j)
-            {
-                if (temp[j] == '\0') {
-                    oldj = j + 1;
-                    break;
-                }
-                ulocat[i][k] = temp[j];
-                k++;
-            }
-            fgetc(f);
-            checkeof=fgetc(f);
-            if(checkeof==EOF)
-            {
-                fclose(f);
-                return ;
-            }
-
-            ungetc(checkeof,f);
-        }
-        fclose(f);
+        reload();
     }
-    int checker(char input[], char check[])
+    void setuid(int index,string data)
     {
-        int i, result = 1;
-        for (i = 0; i< 100; i++)
-        {
-            if(input[i]=='\n' && check[i]=='\0')
-            {
-                if(strlen(check)==0)
-                {
-                    return 0;
-                }
-                return result;
-            }
-            if (input[i] != check[i])
-            {
-                result = 0;
-                return result;
-            }
-        }
-        return result;
+        uid[index]=stoi(data);
     }
-};
-class insert:public reload
-{
-public:
-    insert()
+    int getuid(int index)
     {
-        for (int i = 0; i < MAX; ++i)
-        {
-            if(uid[i]==0)
-            {
-                myindex=i;
-                if(i!=0)
-                {
-                    if(uid[i-1]>0)
-                    {
-                        uid[i]=uid[i-1]+1;
-                    }
-                }
-                else
-                {
-                    uid[i]=1;
-                }
-                break;
-            }
-        }
-        printf("Enter Your username : ");
-        fflush(stdin);
-        fgets(uname[myindex],sizeof(username),stdin);
-        printf("Enter Your password : ");
-        fflush(stdin);
-        fgets(upass[myindex],sizeof(password),stdin);
-        int m;
-        printf("Enter money amount : ");
-        scanf("%d",&uamount[myindex]);
-        printf("Enter age : ");
-        scanf("%d",&uage[myindex]);
-        printf("Enter location : ");
-        fflush(stdin);
-        fgets(ulocat[myindex],sizeof(location),stdin);
-
-        for (int j = 0; j < MAX; ++j)
-        {
-            int condition=0;
-            if(uname[myindex][j]=='\n')
-            {
-                uname[myindex][j]='\0';
-                condition=condition+1;
-            }
-            if(upass[myindex][j]=='\n')
-            {
-                upass[myindex][j]='\0';
-                condition=condition+1;
-            }
-            if(ulocat[myindex][j]=='\n')
-            {
-                ulocat[myindex][j]='\0';
-                condition=condition+1;
-            }
-            if(condition==3)
-            {
-                break;
-            }
-        }
-        append();
+        return uid[index];
+    }
+    void setuname(int index,string data)
+    {
+        uname[index]=data;
+    }
+    string getuname(int index)
+    {
+        return uname[index];
+    }
+    void setupass(int index,string data)
+    {
+        upass[index]=data;
+    }
+    string getupass(int index)
+    {
+        return upass[index];
+    }
+    void setuamount(int index,string data)
+    {
+        uamount[index]=stoi(data);
+    }
+    int getuamount(int index)
+    {
+        return uamount[index];
+    }
+    void setuage(int index, string data)
+    {
+        uage[index]=stoi(data);
+    }
+    int getuage(int index)
+    {
+        return uage[index];
+    }
+    void setulocat(int index,string data)
+    {
+        ulocat[index]=data;
+    }
+    string getulocat(int index)
+    {
+        return ulocat[index];
     }
 private:
-    void append()
-    {
-        f=fopen("database.txt","r");
-        if(f==NULL)
-        {
-            fclose(f);
-            f=fopen("database.txt","w");
-        }
-        fclose(f);
-        f=fopen("database.txt","a");
-        fprintf(f,"%d|%s|%s|%d|%d|%s\n",uid[myindex],uname[myindex],upass[myindex],uamount[myindex],uage[myindex],ulocat[myindex]);
-        fclose(f);
-    }
+    int uid[MAX];
+    string uname[MAX];
+    string upass[MAX];
+    int uamount[MAX];
+    int uage[MAX];
+    string ulocat[MAX];
 };
-class update:public reload
+master obj;
+void reload()
+{
+    string temp;
+    f.open("database.txt",ios::in);
+    if (!f)
+    {
+        f.close();
+        ofstream database("database.txt");
+        database.close();
+        return;
+    }
+    while(f.peek() != EOF)
+    {
+        getline(f,temp,'|');
+        obj.setuid(myindex,temp);
+        getline(f,temp,'|');
+        obj.setuname(myindex,temp);
+        getline(f,temp,'|');
+        obj.setupass(myindex,temp);
+        getline(f,temp,'|');
+        obj.setuamount(myindex,temp);
+        getline(f,temp,'|');
+        obj.setuage(myindex,temp);
+        getline(f,temp,'\n');
+        obj.setulocat(myindex,temp);
+        myindex++;
+    }
+    f.close();
+}
+class isu
 {
 public:
-    update()
+    string temp;
+    isu()
     {
-        printf("Enter your username : ");
-        fflush(stdin);
-        fgets(username,sizeof(username),stdin);
-        int numforsearch=0;
-        for (int i = 0; i < MAX; ++i)
-        {
-            if(uid[i]==0)
-            {
-                numforsearch=i;
-                break;
-            }
-        }
-        for (int i = 0; i < numforsearch; ++i)
-        {
-            if (checker(username, uname[i]))
-            {
-                printf("%d|%s|%s|%d|%d|%s\n",uid[i],uname[i],upass[i],uamount[i],uage[i],ulocat[i]);
-                myindex=i;
-            }
-        }
-        opt:
-        printf("1.update username\n2.update password\n3.update amount\n4.update age\n5.update location\n0.return");
-        scanf("%d",&option);
+        int option=0;
+        cout<<"1.insert\n2.search\n3.update\n0.exit"<<endl;
+        cin>>option;
+        cin.clear();
+        cin.ignore(numeric_limits<streamsize>::max(), '\n');
         switch (option)
         {
-            case 0:
-                return;
             case 1:
-                printf("Enter username to update : ");
-                fflush(stdin);
-                fgets(username,sizeof(username),stdin);
-                strcpy(uname[myindex],username);
+                insert();
                 break;
             case 2:
-                printf("Enter password to update : ");
-                fflush(stdin);
-                fgets(password,sizeof(password),stdin);
-                strcpy(upass[myindex],password);
+                search();
                 break;
             case 3:
-                printf("Enter amount to update : ");
-                scanf("%d",amount);
-                uamount[myindex]=amount;
+                update();
                 break;
-            case 4:
-                printf("Enter age to update : ");
-                scanf("%d",age);
-                uage[myindex]=age;
-                break;
-            case 5:
-                printf("Enter location to update : ");
-                fflush(stdin);
-                fgets(location,sizeof(location),stdin);
-                strcpy(ulocat[myindex],location);
-                break;
+            case 0:
+                exit(0);
             default:
-                printf("Not option found!\n");
-                goto opt;
-                break;
-        }
-        for (int j = 0; j < MAX; ++j)
-        {
-            if(uname[myindex][j]=='\n')
-            {
-                uname[myindex][j]='\0';
-            }
-            if(upass[myindex][j]=='\n')
-            {
-                upass[myindex][j]='\0';
-            }
-            if(ulocat[myindex][j]=='\n')
-            {
-                ulocat[myindex][j] = '\0';
-            }
-        }
-        writedata();
-    }
-private:
-    void writedata()
-    {
-        f=fopen("database.txt","r");
-        if(f==NULL)
-        {
-            fclose(f);
-            f=fopen("database.txt","w");
-        }
-        fclose(f);
-        f=fopen("database.txt","w");
-        fclose(f);
-        f=fopen("database.txt","a");
-        int numforwritedata=0;
-        for (int i = 0; i < MAX; ++i)
-        {
-            if(uid[i]==0)
-            {
-                numforwritedata=i;
-                break;
-            }
-        }
-        for (int i = 0; i < numforwritedata; ++i)
-        {
-            fprintf(f,"%d|%s|%s|%d|%d|%s\n",uid[i],uname[i],upass[i],uamount[i],uage[i],ulocat[i]);
+                cout<<"Invalid option";
+                isu();
         }
     }
-};
-class search:public reload
-{
-public:
-    search()
+    void insert()
     {
-        printf("Enter username to search : ");
-        fflush(stdin);
-        fgets(username,sizeof(username),stdin);
-        int numforsearch=0;
-        for (int i = 0; i < MAX; ++i)
+        f.open("database.txt",ios::app);
+        cout<<"Enter Your username : ";
+        getline(cin,temp);
+        obj.setuname(myindex,temp);
+
+        cout<<"Enter Your password : ";
+        getline(cin,temp);
+        obj.setupass(myindex,temp);
+
+        cout<<"Enter money amount : ";
+        cin>>temp;
+        cin.clear();
+        cin.ignore(numeric_limits<streamsize>::max(), '\n');
+        obj.setuamount(myindex,temp);
+
+        cout<<"Enter age : ";
+        cin>>temp;
+        cin.clear();
+        cin.ignore(numeric_limits<streamsize>::max(), '\n');
+        obj.setuage(myindex,temp);
+
+        cout<<"Enter location : ";
+        getline(cin,temp);
+        obj.setulocat(myindex,temp);
+        f<<myindex+1<<"|"<<obj.getuname(myindex)<<"|"<<obj.getupass(myindex)<<"|"<<obj.getuamount(myindex)<<"|"<<obj.getuage(myindex)<<"|"<<obj.getulocat(myindex)<<endl;
+        myindex++;
+        f.close();
+        isu();
+    }
+    void search()
+    {
+        cout<<"Enter username to search : ";
+        getline(cin,temp);
+        for (int i = 0; i < myindex; ++i)
         {
-            if(uid[i]==0)
+            if(temp==obj.getuname(i))
             {
-                numforsearch=i;
-                break;
-            }
-        }
-        for (int i = 0; i < numforsearch; ++i)
-        {
-            if(checker(username,uname[i]))
-            {
-                printf("%d|%s|%s|%d|%d|%s\n",uid[i],uname[i],upass[i],uamount[i],uage[i],ulocat[i]);
+                cout<<obj.getuid(i)<<"|"<<obj.getuname(i)<<"|"<<obj.getupass(i)<<"|"<<obj.getuamount(i)<<"|"<<obj.getuage(i)<<"|"<<obj.getulocat(i)<<endl;
+                isu();
                 return;
             }
         }
         printf("Username not found!\n");
     }
+    void update()
+    {
+        int option=0;
+        cout<<"Enter username to update : ";
+        getline(cin,temp);
+        for (int i = 0; i < myindex; ++i)
+        {
+            if(temp==obj.getuname(i))
+            {
+                cout<<obj.getuid(i)<<"|"<<obj.getuname(i)<<"|"<<obj.getupass(i)<<"|"<<obj.getuamount(i)<<"|"<<obj.getuage(i)<<"|"<<obj.getulocat(i)<<endl;
+                opt:
+                cout<<"1.update username\n2.update password\n3.update amount\n4.update age\n5.update location\n0.return"<<endl;
+                cin>>option;
+                cin.clear();
+                cin.ignore(numeric_limits<streamsize>::max(), '\n');
+                switch (option)
+                {
+                    case 0:
+                        return;
+                    case 1:
+                        cout<<("Enter username to update : ");
+                        getline(cin,temp);
+                        obj.setuname(i,temp);
+                        break;
+                    case 2:
+                        cout<<("Enter password to update : ");
+                        getline(cin,temp);
+                        obj.setupass(i,temp);
+                        break;
+                    case 3:
+                        cout<<("Enter amount to update : ");
+                        cin>>temp;
+                        cin.ignore( MAX, '\n' );
+                        obj.setuamount(i,temp);
+                        break;
+                    case 4:
+                        cout<<("Enter age to update : ");
+                        cin>>temp;
+                        cin.ignore( MAX, '\n' );
+                        obj.setuage(i,temp);
+                        break;
+                    case 5:
+                        cout<<("Enter location to update : ");
+                        getline(cin,temp);
+                        obj.setulocat(i,temp);
+                        break;
+                    default:
+                        cout<<("Not option found!\n");
+                        goto opt;
+                        break;
+                }
+                write();
+                isu();
+            }
+        }
+    }
+private:
+    void write()
+    {
+        f.open("database.txt",ios::out);
+        if (!f)
+        {
+            f.close();
+            ofstream database("database.txt");
+            database.close();
+            f.open("database.txt",ios::out);
+        }
+        for (int i = 0; i < myindex; ++i)
+        {
+            f<<obj.getuid(i)<<"|"<<obj.getuname(i)<<"|"<<obj.getupass(i)<<"|"<<obj.getuamount(i)<<"|"<<obj.getuage(i)<<"|"<<obj.getulocat(i)<<endl;
+        }
+
+    }
 };
 int main()
 {
-    int option=0;
-    printf("1.insert,2.search,3.update,0.exit");
-    scanf("%d",&option);
-    switch (option)
-    {
-        case 0:
-            exit(0);
-        case 1:
-        {
-            insert objinsert;
-        }
-            break;
-        case 2:
-        {
-            search objsearch;
-        }
-            break;
-        case 3:
-        {
-            update objupdate;
-        }
-            break;
-        default:
-        {
-            main();
-        }
-            break;
-    }
-    main();
+    isu myisu;
     return 0;
 }
